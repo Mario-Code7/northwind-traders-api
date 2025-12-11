@@ -4,10 +4,7 @@ import com.pluralsight.NorthwindTradersAPI.models.Product;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +70,33 @@ public class JdbcProductDao implements ProductDao {
             }
         } catch(SQLException e) {
             System.out.println("There is an error retrieving the data. Please try again!");
+            e.printStackTrace();
+        }
+        return product;
+    }
+
+    public Product insert(Product product) {
+        String query =  """
+            INSERT INTO products (ProductName, CategoryID, UnitPrice)
+            VALUES (?, ?, ?)
+            """;
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+            statement.setString(1, product.getProductName());
+            statement.setInt(2, product.getCategoryId());
+            statement.setDouble(3, product.getUnitPrice());
+
+            statement.executeUpdate();
+
+//            try (ResultSet keys = statement.getGeneratedKeys()) {
+//                if (keys.next()) {
+//                    product.setProductId(keys.getInt(1));
+//                }
+//            }
+
+        } catch (SQLException e) {
+            System.out.println("There was an error inserting data. Please try again.");
             e.printStackTrace();
         }
         return product;
