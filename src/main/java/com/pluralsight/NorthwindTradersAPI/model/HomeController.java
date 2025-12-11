@@ -10,7 +10,7 @@ public class HomeController {
         // this method will respond to http://localhost:8080/
         @RequestMapping(path="/", method= RequestMethod.GET)
         public String index(
-                @RequestParam(defaultValue="World") String country
+                @RequestParam(defaultValue="Site") String country
         ) {
             return "Best " + country + "!";
         }
